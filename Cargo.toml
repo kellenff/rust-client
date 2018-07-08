@@ -1,5 +1,5 @@
 [package]
-name = "rust-client"
+name = "rust_client"
 version = "0.1.0"
 authors = ["Kellen Frodelius-Fujimoto <kellen@kellenfujimoto.com>"]
 description = "A command line http client"
@@ -12,3 +12,7 @@ path = "src/main.rs"
 name = "rc"
 
 [dependencies]
+clap = "2.32.0"
+hyper = "0.12.5"
+hyper-tls = "0.3.0"
+futures = "0.1"
