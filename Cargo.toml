@@ -1,0 +1,9 @@
+[package]
+name = "rust-client"
+version = "0.1.0"
+authors = ["Kellen Frodelius-Fujimoto <kellen@kellenfujimoto.com>"]
+description = "A command line http client"
+license = "MIT"
+license-file = "LICENSE"
+
+[dependencies]
