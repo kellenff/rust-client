@@ -6,4 +6,9 @@ description = "A command line http client"
 license = "MIT"
 license-file = "LICENSE"
 
+[[bin]]
+bench = false
+path = "src/main.rs"
+name = "rc"
+
 [dependencies]
