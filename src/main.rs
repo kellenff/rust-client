@@ -10,7 +10,7 @@ fn main() {
 
     let target = config.uri();
 
-    println!("GET {}", target);
+    println!("{} {}", config.method(), target);
     let body: Option<&str> = None;
     request_uri(target, Method::GET, body).expect("Unable to request uri");
 }
