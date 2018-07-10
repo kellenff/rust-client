@@ -21,15 +21,19 @@ pub fn cli_app<'a, 'b>() -> App<'a, 'b> {
         .version("0.1.0")
         .author("Kellen Frodelius-Fujimoto <kellen@kellenfujimoto.com>")
         .about("A command line http client")
-        .arg(Arg::with_name("METHOD")
-            .help("The method used in the request")
-            .possible_values(&["get", "post", "head"])
-            .required(true)
-            .index(1))
-        .arg(Arg::with_name("URI")
-            .help("The URI to send the request to")
-            .required(true)
-            .index(2))
+        .arg(
+            Arg::with_name("METHOD")
+                .help("The method used in the request")
+                .possible_values(&["get", "post", "head"])
+                .required(true)
+                .index(1),
+        )
+        .arg(
+            Arg::with_name("URI")
+                .help("The URI to send the request to")
+                .required(true)
+                .index(2),
+        )
 }
 
 pub fn request_uri(addr: Uri, method: Method, body: Option<impl Into<Body>>) -> RequestResult<()> {
@@ -108,9 +112,14 @@ impl<'a> RunConfig<'a> {
 impl<'a> From<ArgMatches<'a>> for RunConfig<'a> {
     fn from(matches: ArgMatches<'a>) -> RunConfig<'a> {
         let uri = match matches.value_of("URI") {
-            Some(s) => s
-                .parse::<Uri>()
-                .expect("URI argument must conform to the `hyper` URI specification"),
+            Some(s) => {
+                if s.starts_with("http") {
+                    s.parse::<Uri>().expect("Invalid URI")
+                } else {
+                    let s = "http://".to_owned() + s;
+                    s.parse::<Uri>().expect("Invalid URI")
+                }
+            }
             None => {
                 // URI is a required argument; `clap` should catch this case for us
                 unreachable!();
@@ -118,9 +127,7 @@ impl<'a> From<ArgMatches<'a>> for RunConfig<'a> {
         };
 
         let method = match matches.value_of("METHOD") {
-            Some(s) => {
-                Method::from_str(&s.to_ascii_uppercase()).expect("Incompatible HTTP method")
-            }
+            Some(s) => Method::from_str(&s.to_ascii_uppercase()).expect("Incompatible HTTP method"),
             None => {
                 // Prevented by `clap`'s `Arg::possible_values` method
                 unreachable!();
@@ -175,5 +182,18 @@ mod tests {
 
         let head_req = build_request(addr.clone(), head, None);
         assert_eq!(head_req.method(), &Method::HEAD);
+    }
+
+    #[test]
+    fn config_appends_missing_http() {
+        let addr = "localhost:8000";
+        let args = vec!["rc", "get", addr];
+        let matches = cli_app().get_matches_from(args);
+        let config = RunConfig::from(matches);
+
+        assert_eq!(
+            config.uri().to_string(),
+            "http://localhost:8000/".to_owned()
+        );
     }
 }
