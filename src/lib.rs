@@ -111,34 +111,32 @@ impl<'a> RunConfig<'a> {
 
 impl<'a> From<ArgMatches<'a>> for RunConfig<'a> {
     fn from(matches: ArgMatches<'a>) -> RunConfig<'a> {
-        let uri = match matches.value_of("URI") {
-            Some(s) => {
-                if s.starts_with("http") {
-                    s.parse::<Uri>().expect("Invalid URI")
-                } else {
-                    let s = "http://".to_owned() + s;
-                    s.parse::<Uri>().expect("Invalid URI")
-                }
-            }
-            None => {
-                // URI is a required argument; `clap` should catch this case for us
-                unreachable!();
-            }
-        };
+        let method = matches
+            .value_of("METHOD")
+            .map(|method| {
+                Method::from_str(&method.to_ascii_uppercase()).expect("Incompatible HTTP method")
+            })
+            .expect("METHOD is a required argument");
 
-        let method = match matches.value_of("METHOD") {
-            Some(s) => Method::from_str(&s.to_ascii_uppercase()).expect("Incompatible HTTP method"),
-            None => {
-                // Prevented by `clap`'s `Arg::possible_values` method
-                unreachable!();
-            }
-        };
+        let uri = matches
+            .value_of("URI")
+            .map(|addr| uri_with_added_missing_scheme(addr))
+            .expect("URI is a required argument");
 
         RunConfig {
             raw_matches: matches,
             uri,
             method,
         }
+    }
+}
+
+fn uri_with_added_missing_scheme(addr: &str) -> Uri {
+    if addr.starts_with("http") {
+        addr.parse::<Uri>().expect("Invalid URI")
+    } else {
+        let addr = "http://".to_owned() + addr;
+        addr.parse::<Uri>().expect("Invalid URI")
     }
 }
 
