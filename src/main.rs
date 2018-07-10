@@ -9,8 +9,9 @@ fn main() {
     let config = run_config();
 
     let target = config.uri();
+    let body = config.body_str().map(|s| s.to_owned());
 
     println!("{} {}", config.method(), target);
-    let body: Option<&str> = None;
+
     request_uri(target, Method::GET, body).expect("Unable to request uri");
 }

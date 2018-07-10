@@ -33,6 +33,11 @@ pub fn cli_app<'a, 'b>() -> App<'a, 'b> {
                 .required(true)
                 .index(2),
         )
+        .arg(
+            Arg::with_name("BODY")
+                .help("An optional literal body for the request")
+                .index(3)
+        )
 }
 
 pub fn request_uri(addr: Uri, method: Method, body: Option<impl Into<Body>>) -> RequestResult<()> {
@@ -96,6 +101,7 @@ pub struct RunConfig<'a> {
     raw_matches: ArgMatches<'a>,
     uri: Uri,
     method: Method,
+    raw_body: Option<String>,
 }
 
 // TODO: Figure out lifetime issues around returning reference to properties; I'd rather not clone all over the place
@@ -106,6 +112,10 @@ impl<'a> RunConfig<'a> {
 
     pub fn method(&self) -> Method {
         self.method.clone()
+    }
+
+    pub fn body_str(&'a self) -> Option<&'a str> {
+        self.raw_body.as_ref().map(|s| s.as_str())
     }
 }
 
@@ -123,10 +133,13 @@ impl<'a> From<ArgMatches<'a>> for RunConfig<'a> {
             .map(|addr| uri_with_added_missing_scheme(addr))
             .expect("URI is a required argument");
 
+        let raw_body = matches.value_of("BODY").map(|s| s.to_string());
+
         RunConfig {
             raw_matches: matches,
             uri,
             method,
+            raw_body,
         }
     }
 }
@@ -193,5 +206,14 @@ mod tests {
             config.uri().to_string(),
             "http://localhost:8000/".to_owned()
         );
+    }
+
+    #[test]
+    fn config_includes_body() {
+        let args = vec!["rc", "post", "localhost:8000", r#"{"foo": "bar"}"#];
+        let matches = cli_app().get_matches_from(args);
+        let config = RunConfig::from(matches);
+
+        assert_eq!(config.body_str(), Some(r#"{"foo": "bar"}"#));
     }
 }
