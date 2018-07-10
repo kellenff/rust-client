@@ -1,26 +1,16 @@
-extern crate rust_client;
-extern crate clap;
 extern crate hyper;
+extern crate rust_client;
 
-use clap::{Arg, App};
-
-use rust_client::request_uri;
-use hyper::Uri;
 use hyper::Method;
+use rust_client::request_uri;
+use rust_client::run_config;
 
 fn main() {
-    let matches = App::new("rust-client")
-        .version("0.1.0")
-        .author("Kellen Frodelius-Fujimoto <kellen@kellenfujimoto.com>")
-        .about("A command line http client")
-        .arg(Arg::with_name("URI")
-            .help("The URI to send the request to")
-            .required(true)
-            .index(1))
-        .get_matches();
+    let config = run_config();
 
-    let target = matches.value_of("URI").expect("URI is required!");
+    let target = config.uri();
 
     println!("GET {}", target);
-    request_uri(target.parse::<Uri>().unwrap(), Method::HEAD);
+    let body: Option<&str> = None;
+    request_uri(target, Method::GET, body).expect("Unable to request uri");
 }
