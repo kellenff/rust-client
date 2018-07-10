@@ -41,16 +41,17 @@ pub fn request_uri(addr: Uri, method: Method, body: Option<impl Into<Body>>) -> 
 
     let request = build_request(addr, method, body.map(|b| b.into()));
 
-    let response = client.request(request);
+    let sent_request = client.request(request);
 
-    let work = response
-        .and_then(|res| {
-            println!("{:?} {}", res.version(), res.status());
-            for (key, value) in res.headers() {
-                println!("{}: {}", key.as_str(), value.to_str().unwrap());
-            }
-            res.into_body().concat2()
-        })
+    let response = sent_request.and_then(|res| {
+        println!("{:?} {}", res.version(), res.status());
+        for (key, value) in res.headers() {
+            println!("{}: {}", key.as_str(), value.to_str().unwrap());
+        }
+        res.into_body().concat2()
+    });
+
+    let print_body = response
         .and_then(|body| {
             let s = ::std::str::from_utf8(&body)
                 .expect("rust-client only supports UTF-8 response bodies");
@@ -62,7 +63,7 @@ pub fn request_uri(addr: Uri, method: Method, body: Option<impl Into<Body>>) -> 
             println!("error: {}", err);
         });
 
-    rt::run(work);
+    rt::run(print_body);
     Ok(())
 }
 
