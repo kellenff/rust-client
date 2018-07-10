@@ -423,7 +423,6 @@ name = "rust_client"
 version = "0.1.0"
 dependencies = [
  "clap 2.32.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "futures 0.1.21 (registry+https://github.com/rust-lang/crates.io-index)",
  "hyper 0.12.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "hyper-tls 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
