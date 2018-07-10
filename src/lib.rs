@@ -37,6 +37,7 @@ pub fn request_uri(addr: Uri, method: Method, body: Option<impl Into<Body>>) -> 
 
     let work = response
         .and_then(|res| {
+            println!("{:?} {}", res.version(), res.status());
             for (key, value) in res.headers() {
                 println!("{}: {}", key.as_str(), value.to_str().unwrap());
             }
