@@ -8,6 +8,7 @@ use hyper::client::HttpConnector;
 use hyper::rt::{self, Future, Stream};
 use hyper::{Body, Client, Method, Request, Uri};
 use hyper_tls::HttpsConnector;
+use std::str::FromStr;
 
 pub fn run_config<'a>() -> RunConfig<'a> {
     let matches = cli_app().get_matches();
@@ -20,12 +21,15 @@ pub fn cli_app<'a, 'b>() -> App<'a, 'b> {
         .version("0.1.0")
         .author("Kellen Frodelius-Fujimoto <kellen@kellenfujimoto.com>")
         .about("A command line http client")
-        .arg(
-            Arg::with_name("URI")
-                .help("The URI to send the request to")
-                .required(true)
-                .index(1),
-        )
+        .arg(Arg::with_name("METHOD")
+            .help("The method used in the request")
+            .possible_values(&["get", "post", "head"])
+            .required(true)
+            .index(1))
+        .arg(Arg::with_name("URI")
+            .help("The URI to send the request to")
+            .required(true)
+            .index(2))
 }
 
 pub fn request_uri(addr: Uri, method: Method, body: Option<impl Into<Body>>) -> RequestResult<()> {
@@ -87,12 +91,17 @@ pub enum RequestError {
 pub struct RunConfig<'a> {
     raw_matches: ArgMatches<'a>,
     uri: Uri,
+    method: Method,
 }
 
+// TODO: Figure out lifetime issues around returning reference to properties; I'd rather not clone all over the place
 impl<'a> RunConfig<'a> {
     pub fn uri(&self) -> Uri {
-        // TODO: Figure out lifetime issues around returning reference to self.uri; I'd rather not clone all over the place
         self.uri.clone()
+    }
+
+    pub fn method(&self) -> Method {
+        self.method.clone()
     }
 }
 
@@ -107,9 +116,21 @@ impl<'a> From<ArgMatches<'a>> for RunConfig<'a> {
                 unreachable!();
             }
         };
+
+        let method = match matches.value_of("METHOD") {
+            Some(s) => {
+                Method::from_str(&s.to_ascii_uppercase()).expect("Incompatible HTTP method")
+            }
+            None => {
+                // Prevented by `clap`'s `Arg::possible_values` method
+                unreachable!();
+            }
+        };
+
         RunConfig {
             raw_matches: matches,
             uri,
+            method,
         }
     }
 }
@@ -120,19 +141,23 @@ mod tests {
     use hyper::{Method, Uri};
 
     #[test]
-    fn run_config_uri_method() {
-        let mut app = cli_app();
-        let cli_args = vec!["rc", "http://localhost:8000"];
-        let matches = app.get_matches_from(cli_args);
-        let uri = matches
-            .value_of("URI")
-            .unwrap()
-            .clone()
-            .parse::<Uri>()
-            .unwrap();
-        let config = RunConfig::from(matches);
+    fn run_config_explicit_method() {
+        let app = cli_app();
+        let get_args = vec!["rc", "get", "http://localhost:8000"];
+        let post_args = vec!["rc", "post", "http://localhost:8000"];
+        let head_args = vec!["rc", "head", "http://localhost:8000"];
 
-        assert_eq!(uri, config.uri());
+        let get_matches = app.clone().get_matches_from(get_args);
+        let get_config = RunConfig::from(get_matches);
+        assert_eq!(get_config.method(), Method::GET);
+
+        let post_matches = app.clone().get_matches_from(post_args);
+        let post_config = RunConfig::from(post_matches);
+        assert_eq!(post_config.method(), Method::POST);
+
+        let head_matches = app.clone().get_matches_from(head_args);
+        let head_config = RunConfig::from(head_matches);
+        assert_eq!(head_config.method(), Method::HEAD);
     }
 
     #[test]
