@@ -4,6 +4,7 @@ version = "0.1.0"
 authors = ["Kellen Frodelius-Fujimoto <kellen@kellenfujimoto.com>"]
 description = "A command line http client"
 license-file = "LICENSE"
+readme = "README.md"
 
 [[bin]]
 bench = false
