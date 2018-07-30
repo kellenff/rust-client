@@ -639,7 +639,7 @@ dependencies = [
 
 [[package]]
 name = "rust_client"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "clap 2.32.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "mockito 0.12.0 (registry+https://github.com/rust-lang/crates.io-index)",

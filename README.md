@@ -2,7 +2,7 @@
 
 A fast, opinionated command line HTTP client.
 
-Fundamentally, `rust-client` is a thin wrapper around Rust's fantastic `hyper` library. Unlike `curl`, however, it is designed more as a debugging tool. Headers are displayed above the response body, the command line interface is more intuitive than remembering flags, and default en-/decoding behavior.
+Fundamentally, `rust-client` is a thin wrapper around Rust's fantastic `reqwest` library. Unlike `curl`, however, it is designed more as a debugging tool. Headers are displayed above the response body, the command line interface is more intuitive than remembering flags, and default en-/decoding behavior.
 
 ## Performance
 
@@ -106,6 +106,5 @@ The test server is the example server from `hyper`'s documentation.
 ## TODO
 - Colorize output
 - HTML pretty printing
-- Optional body content
 - encode body content in a specific format (JSON, YAML, etc)
 - decode response based on Content-Type
