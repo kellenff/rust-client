@@ -16,6 +16,4 @@ clap = "2.32.0"
 reqwest = "0.8.6"
 
 [dev-dependencies]
-futures = "^0.1"
-hyper = "0.12.5"
-hyper-tls = "0.3.0"
+mockito = "0.12.0"

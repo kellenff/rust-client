@@ -11,7 +11,7 @@ use error::RequestResult;
 pub mod app;
 pub mod error;
 
-pub fn request_uri(
+pub fn request_url(
     addr: Url,
     method: Method,
     body: Option<impl Into<Body>>,

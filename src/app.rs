@@ -2,7 +2,7 @@ use clap::App;
 use clap::Arg;
 use clap::ArgMatches;
 use error::RequestResult;
-use request_uri;
+use request_url;
 use reqwest::Method;
 use reqwest::Response;
 use reqwest::Url;
@@ -63,7 +63,7 @@ impl<'a> RunConfig<'a> {
     }
 
     pub fn execute(&self) -> RequestResult<ExecutionResponse> {
-        let response = request_uri(self.url(), self.method(), self.raw_body.clone())?;
+        let response = request_url(self.url(), self.method(), self.raw_body.clone())?;
         Ok(ExecutionResponse { response })
     }
 }
