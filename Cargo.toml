@@ -1,6 +1,6 @@
 [package]
 name = "rust_client"
-version = "0.2.0"
+version = "0.2.1"
 authors = ["Kellen Frodelius-Fujimoto <kellen@kellenfujimoto.com>"]
 description = "A command line http client"
 license-file = "LICENSE"
