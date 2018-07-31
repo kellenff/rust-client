@@ -1,12 +1,12 @@
 extern crate clap;
+extern crate mockito;
 extern crate reqwest;
 extern crate rust_client;
-extern crate mockito;
 
+use mockito::mock;
 use reqwest::Method;
 use reqwest::StatusCode;
 use rust_client::app::{cli_app, RunConfig};
-use mockito::mock;
 
 const TARGET_URL: &'static str = mockito::SERVER_URL;
 
