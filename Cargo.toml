@@ -5,6 +5,7 @@ authors = ["Kellen Frodelius-Fujimoto <kellen@kellenfujimoto.com>"]
 description = "A command line http client"
 license-file = "LICENSE"
 readme = "README.md"
+repository = "https://gitlab.com/rakenodiax/rust-client"
 
 [[bin]]
 path = "src/main.rs"
