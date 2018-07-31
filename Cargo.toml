@@ -7,7 +7,6 @@ license-file = "LICENSE"
 readme = "README.md"
 
 [[bin]]
-bench = false
 path = "src/main.rs"
 name = "rc"
 
@@ -17,3 +16,8 @@ reqwest = "0.8.6"
 
 [dev-dependencies]
 mockito = "0.12.0"
+criterion = "0.2.4"
+
+[[bench]]
+name = "request_benchmark"
+harness = false

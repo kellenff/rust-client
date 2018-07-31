@@ -40,7 +40,7 @@ pub fn cli_app<'a, 'b>() -> App<'a, 'b> {
         )
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct RunConfig<'a> {
     raw_matches: ArgMatches<'a>,
     url: Url,
