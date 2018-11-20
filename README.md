@@ -104,7 +104,7 @@ While `rust-client` and `curl` perform similarly, `curl` does not print the same
 The test server is the example server from `hyper`'s documentation.
 
 ## TODO
-- Colorize output
+- Flag to disable ansi escaping for output
 - HTML pretty printing
 - encode body content in a specific format (JSON, YAML, etc)
 - decode response based on Content-Type

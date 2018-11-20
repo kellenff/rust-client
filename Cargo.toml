@@ -13,7 +13,14 @@ name = "rc"
 
 [dependencies]
 clap = "2.32.0"
-reqwest = "0.8.6"
+reqwest = "0.9.5"
+pretty_html = "0.1.0"
+derive_more = "0.13.0"
+mime = "0.3.12"
+hyper = "0.12.14"
+docopt = "1.0.2"
+serde = "1.0.80"
+serde_derive = "1.0.80"
 
 [dev-dependencies]
 mockito = "0.12.0"
