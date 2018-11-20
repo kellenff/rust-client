@@ -13,6 +13,7 @@ pub struct Command {
     client: ClientBuilder,
     addr: Url,
     method: Method,
+    body: Option<String>,
 }
 
 impl Command {
@@ -25,6 +26,7 @@ impl Command {
             addr,
             client,
             method,
+            body: None,
         })
     }
 
@@ -33,14 +35,24 @@ impl Command {
         self
     }
 
+    pub fn body(mut self, body: String) -> Command {
+        self.body = Some(body);
+        self
+    }
+
     pub fn send(self) -> Result<CompletedResponse, CommandError> {
-        let response = self
+        let builder = self
             .client
             .build()?
-            .request(self.method, self.addr)
-            .send()?;
+            .request(self.method, self.addr);
 
-        CompletedResponse::consume_response(response)
+        if let Some(raw_body) = self.body {
+            let response = builder.body(raw_body).send()?;
+            CompletedResponse::consume_response(response)
+        } else {
+            let response = builder.send()?;
+            CompletedResponse::consume_response(response)
+        }
     }
 }
 
@@ -50,6 +62,7 @@ impl<'a> From<&'a RunConfig> for Command {
             method: config.method(),
             addr: config.url(),
             client: ClientBuilder::new(),
+            body: config.body_str().map(|s| s.to_string()),
         }
     }
 }
