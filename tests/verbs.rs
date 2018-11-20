@@ -1,4 +1,3 @@
-extern crate clap;
 extern crate docopt;
 extern crate mockito;
 extern crate reqwest;
