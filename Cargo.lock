@@ -898,7 +898,7 @@ dependencies = [
 
 [[package]]
 name = "rust_client"
-version = "0.2.2"
+version = "0.2.3"
 dependencies = [
  "criterion 0.2.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "docopt 1.0.2 (registry+https://github.com/rust-lang/crates.io-index)",
