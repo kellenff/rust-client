@@ -1,15 +1,15 @@
 #[macro_use]
 extern crate criterion;
+extern crate docopt;
 extern crate mockito;
 extern crate rust_client;
-extern crate docopt;
 
 use criterion::Criterion;
 
-use rust_client::app::{RunConfig, USAGE};
-use rust_client::command::Command;
 use docopt::Docopt;
 use rust_client::app::Args;
+use rust_client::app::{RunConfig, USAGE};
+use rust_client::command::Command;
 
 const URL: &'static str = mockito::SERVER_URL;
 

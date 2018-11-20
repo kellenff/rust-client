@@ -1,14 +1,14 @@
 extern crate clap;
+extern crate docopt;
 extern crate mockito;
 extern crate reqwest;
 extern crate rust_client;
-extern crate docopt;
 
+use docopt::Docopt;
 use mockito::mock;
 use reqwest::Method;
 use reqwest::StatusCode;
-use rust_client::app::{RunConfig, USAGE, Args};
-use docopt::Docopt;
+use rust_client::app::{Args, RunConfig, USAGE};
 use rust_client::command::Command;
 
 const TARGET_URL: &'static str = mockito::SERVER_URL;
@@ -25,7 +25,8 @@ fn get_simple() {
 
     let args = || vec!["rc", "get", TARGET_URL].into_iter();
 
-    let matches: Args = Docopt::new(USAGE).and_then(|d| d.argv(args()).deserialize())
+    let matches: Args = Docopt::new(USAGE)
+        .and_then(|d| d.argv(args()).deserialize())
         .unwrap();
     let config = RunConfig::from(matches);
 

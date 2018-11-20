@@ -1,6 +1,6 @@
+use docopt::Docopt;
 use reqwest::Method;
 use reqwest::Url;
-use docopt::Docopt;
 
 pub const USAGE: &str = r#"
 Usage: rc [(get|post)] [options] <address> [<body>]
@@ -24,7 +24,7 @@ pub struct Args {
     cmd_post: bool,
     flag_nocolor: bool,
     arg_address: String,
-    arg_body: Option<String>
+    arg_body: Option<String>,
 }
 
 #[derive(Debug, Clone)]
@@ -69,7 +69,7 @@ impl From<Args> for RunConfig {
             method,
             url,
             raw_body,
-            color
+            color,
         }
     }
 }
@@ -86,9 +86,9 @@ fn uri_with_added_missing_scheme(addr: &str) -> Url {
 #[cfg(test)]
 mod tests {
     use super::{RunConfig, USAGE};
-    use reqwest::Method;
-    use docopt::Docopt;
     use app::Args;
+    use docopt::Docopt;
+    use reqwest::Method;
 
     #[test]
     fn run_config_explicit_method() {
@@ -96,12 +96,14 @@ mod tests {
         let post_args = || vec!["rc", "post", "http://localhost:8000"].into_iter();
 
         let get_matches: Args = Docopt::new(USAGE)
-            .and_then(|d| d.argv(get_args()).deserialize()).unwrap();
+            .and_then(|d| d.argv(get_args()).deserialize())
+            .unwrap();
         let get_config = RunConfig::from(get_matches);
         assert_eq!(get_config.method(), Method::GET);
 
         let post_matches: Args = Docopt::new(USAGE)
-            .and_then(|d| d.argv(post_args()).deserialize()).unwrap();
+            .and_then(|d| d.argv(post_args()).deserialize())
+            .unwrap();
         let post_config = RunConfig::from(post_matches);
         assert_eq!(post_config.method(), Method::POST);
     }
@@ -111,7 +113,8 @@ mod tests {
         let addr = "localhost:8000";
         let args = || vec!["rc", "get", addr].into_iter();
         let matches: Args = Docopt::new(USAGE)
-            .and_then(|d| d.argv(args()).deserialize()).unwrap();
+            .and_then(|d| d.argv(args()).deserialize())
+            .unwrap();
         let config = RunConfig::from(matches);
 
         assert_eq!(
@@ -124,7 +127,8 @@ mod tests {
     fn config_includes_body() {
         let args = || vec!["rc", "post", "localhost:8000", r#"{"foo": "bar"}"#].into_iter();
         let matches: Args = Docopt::new(USAGE)
-            .and_then(|d| d.argv(args()).deserialize()).unwrap();
+            .and_then(|d| d.argv(args()).deserialize())
+            .unwrap();
         let config = RunConfig::from(matches);
 
         assert_eq!(config.body_str(), Some(r#"{"foo": "bar"}"#));
@@ -134,7 +138,8 @@ mod tests {
     fn nocolor_flag_respected() {
         let args = || vec!["rc", "get", "--nocolor", "localhost:8000"].into_iter();
         let matches: Args = Docopt::new(USAGE)
-            .and_then(|d| d.argv(args()).deserialize()).unwrap();
+            .and_then(|d| d.argv(args()).deserialize())
+            .unwrap();
         let config = RunConfig::from(matches);
 
         assert!(!config.color());

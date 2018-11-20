@@ -2,9 +2,9 @@ extern crate reqwest;
 extern crate rust_client;
 
 use rust_client::app::run_config;
-use std::time;
 use rust_client::command::Command;
 use rust_client::presenter::Presenter;
+use std::time;
 
 fn main() {
     let config = run_config();

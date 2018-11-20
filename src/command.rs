@@ -1,12 +1,12 @@
-use reqwest::Method;
+use app::RunConfig;
 use reqwest::ClientBuilder;
+use reqwest::Error as ReqwestError;
+use reqwest::Method;
+use reqwest::StatusCode;
 use reqwest::Url;
 use reqwest::UrlError;
-use reqwest::StatusCode;
-use reqwest::Error as ReqwestError;
-use std::fmt;
 use response::CompletedResponse;
-use app::RunConfig;
+use std::fmt;
 
 /// A Request Command
 pub struct Command {
@@ -21,7 +21,11 @@ impl Command {
         let client = ClientBuilder::new();
         let method = Method::GET;
 
-        Ok(Command { addr, client, method })
+        Ok(Command {
+            addr,
+            client,
+            method,
+        })
     }
 
     pub fn method(mut self, method: Method) -> Command {
@@ -30,7 +34,9 @@ impl Command {
     }
 
     pub fn send(self) -> Result<CompletedResponse, CommandError> {
-        let response = self.client.build()?
+        let response = self
+            .client
+            .build()?
             .request(self.method, self.addr)
             .send()?;
 
@@ -43,7 +49,7 @@ impl<'a> From<&'a RunConfig> for Command {
         Command {
             method: config.method(),
             addr: config.url(),
-            client: ClientBuilder::new()
+            client: ClientBuilder::new(),
         }
     }
 }
@@ -52,7 +58,7 @@ impl<'a> From<&'a RunConfig> for Command {
 pub enum CommandError {
     AddrParse(UrlError),
     Http(Option<StatusCode>),
-    Reqwest(ReqwestError)
+    Reqwest(ReqwestError),
 }
 
 impl From<reqwest::UrlError> for CommandError {
@@ -75,7 +81,9 @@ impl fmt::Display for CommandError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             CommandError::AddrParse(err) => write!(f, "Unexpected url: {}", err),
-            CommandError::Http(Some(status_code)) => write!(f, "Error response from the server: {}", status_code),
+            CommandError::Http(Some(status_code)) => {
+                write!(f, "Error response from the server: {}", status_code)
+            }
             CommandError::Http(None) => write!(f, "Http error"),
             CommandError::Reqwest(err) => write!(f, "Client error: {}", err),
         }
