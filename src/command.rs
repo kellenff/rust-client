@@ -41,10 +41,7 @@ impl Command {
     }
 
     pub fn send(self) -> Result<CompletedResponse, CommandError> {
-        let builder = self
-            .client
-            .build()?
-            .request(self.method, self.addr);
+        let builder = self.client.build()?.request(self.method, self.addr);
 
         if let Some(raw_body) = self.body {
             let response = builder.body(raw_body).send()?;
